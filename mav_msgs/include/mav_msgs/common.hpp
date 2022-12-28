@@ -23,11 +23,11 @@
 #ifndef MAV_MSGS_COMMON_H
 #define MAV_MSGS_COMMON_H
 
-#include <geometry_msgs/Point.h>
-#include <geometry_msgs/Quaternion.h>
-#include <geometry_msgs/Vector3.h>
+#include <algorithm>
+#include <geometry_msgs/msg/point.hpp>
+#include <geometry_msgs/msg/quaternion.hpp>
+#include <geometry_msgs/msg/vector3.hpp>
 #include <Eigen/Geometry>
-#include <boost/algorithm/clamp.hpp>
 
 namespace mav_msgs {
 
@@ -52,16 +52,21 @@ inline double MagnitudeOfGravity(const double height,
                        kGravity_c * height);
 }
 
-inline Eigen::Vector3d vector3FromMsg(const geometry_msgs::Vector3& msg) {
+static double clamp(double d, double min, double max) {
+  const double t = d < min ? min : d;
+  return t > max ? max : t;
+}
+
+inline Eigen::Vector3d vector3FromMsg(const geometry_msgs::msg::Vector3& msg) {
   return Eigen::Vector3d(msg.x, msg.y, msg.z);
 }
 
-inline Eigen::Vector3d vector3FromPointMsg(const geometry_msgs::Point& msg) {
+inline Eigen::Vector3d vector3FromPointMsg(const geometry_msgs::msg::Point& msg) {
   return Eigen::Vector3d(msg.x, msg.y, msg.z);
 }
 
 inline Eigen::Quaterniond quaternionFromMsg(
-    const geometry_msgs::Quaternion& msg) {
+    const geometry_msgs::msg::Quaternion& msg) {
   // Make sure this always returns a valid Quaternion, even if the message was
   // uninitialized or only approximately set.
   Eigen::Quaterniond quaternion(msg.w, msg.x, msg.y, msg.z);
@@ -74,7 +79,7 @@ inline Eigen::Quaterniond quaternionFromMsg(
 }
 
 inline void vectorEigenToMsg(const Eigen::Vector3d& eigen,
-                             geometry_msgs::Vector3* msg) {
+                             geometry_msgs::msg::Vector3* msg) {
   assert(msg != NULL);
   msg->x = eigen.x();
   msg->y = eigen.y();
@@ -82,7 +87,7 @@ inline void vectorEigenToMsg(const Eigen::Vector3d& eigen,
 }
 
 inline void pointEigenToMsg(const Eigen::Vector3d& eigen,
-                            geometry_msgs::Point* msg) {
+                            geometry_msgs::msg::Point* msg) {
   assert(msg != NULL);
   msg->x = eigen.x();
   msg->y = eigen.y();
@@ -90,7 +95,7 @@ inline void pointEigenToMsg(const Eigen::Vector3d& eigen,
 }
 
 inline void quaternionEigenToMsg(const Eigen::Quaterniond& eigen,
-                                 geometry_msgs::Quaternion* msg) {
+                                 geometry_msgs::msg::Quaternion* msg) {
   assert(msg != NULL);
   msg->x = eigen.x();
   msg->y = eigen.y();
@@ -114,7 +119,7 @@ inline Eigen::Quaterniond quaternionFromYaw(double yaw) {
 }
 
 inline void setQuaternionMsgFromYaw(double yaw,
-                                    geometry_msgs::Quaternion* msg) {
+                                    geometry_msgs::msg::Quaternion* msg) {
   assert(msg != NULL);
   Eigen::Quaterniond q_yaw = quaternionFromYaw(yaw);
   msg->x = q_yaw.x();
@@ -124,7 +129,7 @@ inline void setQuaternionMsgFromYaw(double yaw,
 }
 
 inline void setAngularVelocityMsgFromYawRate(double yaw_rate,
-                                             geometry_msgs::Vector3* msg) {
+                                             geometry_msgs::msg::Vector3* msg) {
   assert(msg != NULL);
   msg->x = 0.0;
   msg->y = 0.0;
@@ -218,7 +223,7 @@ inline bool vectorFromRotationMatrix(const Eigen::Matrix3d& mat,
   
   // Compute cosine of angle and clamp in range [-1, 1]
   double cos_phi = (mat.trace() - 1.0) / 2.0;
-  double cos_phi_clamped = boost::algorithm::clamp(cos_phi, -1.0, 1.0);
+  double cos_phi_clamped = clamp(cos_phi, -1.0, 1.0);
   double phi = std::acos(cos_phi_clamped);
   
   if (phi < kSmallValueCheck){

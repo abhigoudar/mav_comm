@@ -19,28 +19,28 @@
 #ifndef MAV_PLANNING_MSGS_CONVERSIONS_H
 #define MAV_PLANNING_MSGS_CONVERSIONS_H
 
-#include <geometry_msgs/Point.h>
-#include <geometry_msgs/Quaternion.h>
-#include <geometry_msgs/Vector3.h>
+#include <geometry_msgs/msg/point.hpp>
+#include <geometry_msgs/msg/quaternion.hpp>
+#include <geometry_msgs/msg/vector3.hpp>
 
-#include "mav_planning_msgs/PolynomialSegment.h"
-#include "mav_planning_msgs/PolynomialTrajectory.h"
+#include "mav_planning_msgs/msg/polynomial_segment.hpp"
+#include "mav_planning_msgs/msg/polynomial_trajectory.hpp"
 #include "mav_planning_msgs/eigen_planning_msgs.h"
 
 // deprecated
-#include "mav_planning_msgs/conversions_deprecated.h"
+#include "mav_planning_msgs/conversions_deprecated.hpp"
 
 namespace mav_planning_msgs {
 
 /// Converts a PolynomialSegment double array to an Eigen::VectorXd.
-inline void vectorFromMsgArray(const PolynomialSegment::_x_type& array,
+inline void vectorFromMsgArray(const msg::PolynomialSegment::_x_type& array,
                                Eigen::VectorXd* x) {
   *x = Eigen::Map<const Eigen::VectorXd>(&(array[0]), array.size());
 }
 
 /// Converts an Eigen::VectorXd to a PolynomialSegment double array.
 inline void msgArrayFromVector(const Eigen::VectorXd& x,
-                               PolynomialSegment::_x_type* array) {
+                               msg::PolynomialSegment::_x_type* array) {
   array->resize(x.size());
   Eigen::Map<Eigen::VectorXd> map =
       Eigen::Map<Eigen::VectorXd>(&((*array)[0]), array->size());
@@ -48,7 +48,7 @@ inline void msgArrayFromVector(const Eigen::VectorXd& x,
 }
 
 /// Converts a PolynomialSegment message to an EigenPolynomialSegment structure.
-inline void eigenPolynomialSegmentFromMsg(const PolynomialSegment& msg,
+inline void eigenPolynomialSegmentFromMsg(const msg::PolynomialSegment& msg,
                                           EigenPolynomialSegment* segment) {
   assert(segment != NULL);
 
@@ -60,18 +60,18 @@ inline void eigenPolynomialSegmentFromMsg(const PolynomialSegment& msg,
   vectorFromMsgArray(msg.ry, &(segment->ry));
   vectorFromMsgArray(msg.rz, &(segment->rz));
 
-  segment->segment_time_ns = msg.segment_time.toNSec();
+  segment->segment_time_ns = rclcpp::Duration(msg.segment_time).nanoseconds();
   segment->num_coeffs = msg.num_coeffs;
 }
 
 /// Converts a PolynomialTrajectory message to a EigenPolynomialTrajectory
 inline void eigenPolynomialTrajectoryFromMsg(
-    const PolynomialTrajectory& msg,
+    const msg::PolynomialTrajectory& msg,
     EigenPolynomialTrajectory* eigen_trajectory) {
   assert(eigen_trajectory != NULL);
   eigen_trajectory->clear();
   eigen_trajectory->reserve(msg.segments.size());
-  for (PolynomialTrajectory::_segments_type::const_iterator it =
+  for (msg::PolynomialTrajectory::_segments_type::const_iterator it =
            msg.segments.begin();
        it != msg.segments.end(); ++it) {
     EigenPolynomialSegment segment;
@@ -83,7 +83,7 @@ inline void eigenPolynomialTrajectoryFromMsg(
 /// Converts an EigenPolynomialSegment to a PolynomialSegment message. Does NOT
 /// set the header!
 inline void polynomialSegmentMsgFromEigen(const EigenPolynomialSegment& segment,
-                                          PolynomialSegment* msg) {
+                                          msg::PolynomialSegment* msg) {
   assert(msg != NULL);
   msgArrayFromVector(segment.x, &(msg->x));
   msgArrayFromVector(segment.y, &(msg->y));
@@ -93,7 +93,7 @@ inline void polynomialSegmentMsgFromEigen(const EigenPolynomialSegment& segment,
   msgArrayFromVector(segment.ry, &(msg->ry));
   msgArrayFromVector(segment.rz, &(msg->rz));
 
-  msg->segment_time.fromNSec(segment.segment_time_ns);
+  msg->segment_time = rclcpp::Duration(segment.segment_time_ns);
   msg->num_coeffs = segment.num_coeffs;
 }
 
@@ -101,12 +101,12 @@ inline void polynomialSegmentMsgFromEigen(const EigenPolynomialSegment& segment,
 /// Does NOT set the header!
 inline void polynomialTrajectoryMsgFromEigen(
     const EigenPolynomialTrajectory& eigen_trajectory,
-    PolynomialTrajectory* msg) {
+    msg::PolynomialTrajectory* msg) {
   assert(msg != NULL);
   msg->segments.reserve(eigen_trajectory.size());
   for (EigenPolynomialTrajectory::const_iterator it = eigen_trajectory.begin();
        it != eigen_trajectory.end(); ++it) {
-    PolynomialSegment segment;
+    msg::PolynomialSegment segment;
     polynomialSegmentMsgFromEigen(*it, &segment);
     msg->segments.push_back(segment);
   }

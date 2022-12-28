@@ -19,26 +19,29 @@
 #ifndef MAV_PLANNING_MSGS_CONVERSIONS_DEPRECATED_H
 #define MAV_PLANNING_MSGS_CONVERSIONS_DEPRECATED_H
 
-#include <geometry_msgs/Point.h>
-#include <geometry_msgs/Quaternion.h>
-#include <geometry_msgs/Vector3.h>
+#include <rclcpp/rclcpp.hpp>
 
-#include "mav_planning_msgs/PolynomialSegment4D.h"
-#include "mav_planning_msgs/PolynomialTrajectory4D.h"
+#include <geometry_msgs/msg/point.hpp>
+#include <geometry_msgs/msg/quaternion.hpp>
+#include <geometry_msgs/msg/vector3.hpp>
+
+#include "mav_planning_msgs/msg/polynomial_segment.hpp"
+#include "mav_planning_msgs/msg/polynomial_segment_4d.hpp"
+#include "mav_planning_msgs/msg/polynomial_trajectory.hpp"
 #include "mav_planning_msgs/eigen_planning_msgs.h"
 
 namespace mav_planning_msgs {
   
 /// Converts a PolynomialSegment double array to an Eigen::VectorXd.
-inline void vectorFromMsgArray(const PolynomialSegment4D::_x_type& array,
+inline void vectorFromMsgArray(const msg::PolynomialSegment4d::_x_type& array,
                                Eigen::VectorXd* x);
 
 /// Converts an Eigen::VectorXd to a PolynomialSegment double array.
 inline void msgArrayFromVector(const Eigen::VectorXd& x,
-                               PolynomialSegment4D::_x_type* array);
+                               msg::PolynomialSegment4d::_x_type* array);
 
 /// Converts a PolynomialSegment message to an EigenPolynomialSegment structure.
-inline void eigenPolynomialSegmentFromMsg(const PolynomialSegment4D& msg,
+inline void eigenPolynomialSegmentFromMsg(const msg::PolynomialSegment4d& msg,
                                           EigenPolynomialSegment* segment) {
   assert(segment != NULL);
 
@@ -47,18 +50,18 @@ inline void eigenPolynomialSegmentFromMsg(const PolynomialSegment4D& msg,
   vectorFromMsgArray(msg.z, &(segment->z));
   vectorFromMsgArray(msg.yaw, &(segment->yaw));
 
-  segment->segment_time_ns = msg.segment_time.toNSec();
+  segment->segment_time_ns = rclcpp::Duration(msg.segment_time).nanoseconds();
   segment->num_coeffs = msg.num_coeffs;
 }
 
 /// Converts a PolynomialTrajectory message to a EigenPolynomialTrajectory
 inline void eigenPolynomialTrajectoryFromMsg(
-    const PolynomialTrajectory4D& msg,
+    const msg::PolynomialTrajectory4D& msg,
     EigenPolynomialTrajectory* eigen_trajectory) {
   assert(eigen_trajectory != NULL);
   eigen_trajectory->clear();
   eigen_trajectory->reserve(msg.segments.size());
-  for (PolynomialTrajectory4D::_segments_type::const_iterator it =
+  for (msg::PolynomialTrajectory4D::_segments_type::const_iterator it =
            msg.segments.begin();
        it != msg.segments.end(); ++it) {
     EigenPolynomialSegment segment;
@@ -71,14 +74,14 @@ inline void eigenPolynomialTrajectoryFromMsg(
 /// Converts an EigenPolynomialSegment to a PolynomialSegment message. Does NOT
 /// set the header!
 inline void polynomialSegmentMsgFromEigen(const EigenPolynomialSegment& segment,
-                                          PolynomialSegment4D* msg) {
+                                          msg::PolynomialSegment4d* msg) {
   assert(msg != NULL);
   msgArrayFromVector(segment.x, &(msg->x));
   msgArrayFromVector(segment.y, &(msg->y));
   msgArrayFromVector(segment.z, &(msg->z));
   msgArrayFromVector(segment.yaw, &(msg->yaw));
 
-  msg->segment_time.fromNSec(segment.segment_time_ns);
+  msg->segment_time = rclcpp::Duration(segment.segment_time_ns);
   msg->num_coeffs = segment.num_coeffs;
 }
 
@@ -86,12 +89,12 @@ inline void polynomialSegmentMsgFromEigen(const EigenPolynomialSegment& segment,
 /// Does NOT set the header!
 inline void polynomialTrajectoryMsgFromEigen(
     const EigenPolynomialTrajectory& eigen_trajectory,
-    PolynomialTrajectory4D* msg) {
+    msg::PolynomialTrajectory4D* msg) {
   assert(msg != NULL);
   msg->segments.reserve(eigen_trajectory.size());
   for (EigenPolynomialTrajectory::const_iterator it = eigen_trajectory.begin();
        it != eigen_trajectory.end(); ++it) {
-    PolynomialSegment4D segment;
+    msg::PolynomialSegment4d segment;
     polynomialSegmentMsgFromEigen(*it, &segment);
     msg->segments.push_back(segment);
   }
