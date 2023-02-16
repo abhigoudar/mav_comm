@@ -28,6 +28,7 @@
 #include <geometry_msgs/msg/quaternion.hpp>
 #include <geometry_msgs/msg/vector3.hpp>
 #include <Eigen/Geometry>
+#include <iostream>
 
 namespace mav_msgs {
 

@@ -28,7 +28,7 @@
 #include "mav_planning_msgs/eigen_planning_msgs.h"
 
 // deprecated
-#include "mav_planning_msgs/conversions_deprecated.hpp"
+#include "mav_planning_msgs/conversions_deprecated.h"
 
 namespace mav_planning_msgs {
 

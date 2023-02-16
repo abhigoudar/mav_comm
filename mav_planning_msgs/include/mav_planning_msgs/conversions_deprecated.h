@@ -26,22 +26,22 @@
 #include <geometry_msgs/msg/vector3.hpp>
 
 #include "mav_planning_msgs/msg/polynomial_segment.hpp"
-#include "mav_planning_msgs/msg/polynomial_segment_4d.hpp"
+#include "mav_planning_msgs/msg/polynomial_segment4_d.hpp"
 #include "mav_planning_msgs/msg/polynomial_trajectory.hpp"
 #include "mav_planning_msgs/eigen_planning_msgs.h"
 
 namespace mav_planning_msgs {
   
 /// Converts a PolynomialSegment double array to an Eigen::VectorXd.
-inline void vectorFromMsgArray(const msg::PolynomialSegment4d::_x_type& array,
+inline void vectorFromMsgArray(const msg::PolynomialSegment4D::_x_type& array,
                                Eigen::VectorXd* x);
 
 /// Converts an Eigen::VectorXd to a PolynomialSegment double array.
 inline void msgArrayFromVector(const Eigen::VectorXd& x,
-                               msg::PolynomialSegment4d::_x_type* array);
+                               msg::PolynomialSegment4D::_x_type* array);
 
 /// Converts a PolynomialSegment message to an EigenPolynomialSegment structure.
-inline void eigenPolynomialSegmentFromMsg(const msg::PolynomialSegment4d& msg,
+inline void eigenPolynomialSegmentFromMsg(const msg::PolynomialSegment4D& msg,
                                           EigenPolynomialSegment* segment) {
   assert(segment != NULL);
 
@@ -74,7 +74,7 @@ inline void eigenPolynomialTrajectoryFromMsg(
 /// Converts an EigenPolynomialSegment to a PolynomialSegment message. Does NOT
 /// set the header!
 inline void polynomialSegmentMsgFromEigen(const EigenPolynomialSegment& segment,
-                                          msg::PolynomialSegment4d* msg) {
+                                          msg::PolynomialSegment4D* msg) {
   assert(msg != NULL);
   msgArrayFromVector(segment.x, &(msg->x));
   msgArrayFromVector(segment.y, &(msg->y));
@@ -94,7 +94,7 @@ inline void polynomialTrajectoryMsgFromEigen(
   msg->segments.reserve(eigen_trajectory.size());
   for (EigenPolynomialTrajectory::const_iterator it = eigen_trajectory.begin();
        it != eigen_trajectory.end(); ++it) {
-    msg::PolynomialSegment4d segment;
+    msg::PolynomialSegment4D segment;
     polynomialSegmentMsgFromEigen(*it, &segment);
     msg->segments.push_back(segment);
   }
