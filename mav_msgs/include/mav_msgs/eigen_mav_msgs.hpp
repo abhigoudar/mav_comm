@@ -43,7 +43,7 @@ struct EigenAttitudeThrust {
   }
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-  Eigen::Quaterniond attitude;
+  Eigen::Quaternion<dobule, Eigen::DontAlign> attitude;
   Eigen::Vector3d thrust;
 };
 
@@ -155,7 +155,7 @@ class EigenMavState {
   Eigen::Vector3d position_W;
   Eigen::Vector3d velocity_W;
   Eigen::Vector3d acceleration_B;
-  Eigen::Quaterniond orientation_W_B;
+  Eigen::Quaternion<double, Eigen::DontAlign> orientation_W_B;
   Eigen::Vector3d angular_velocity_B;
   Eigen::Vector3d angular_acceleration_B;
 };
@@ -219,7 +219,7 @@ struct EigenTrajectoryPoint {
   Eigen::Vector3d jerk_W;
   Eigen::Vector3d snap_W;
 
-  Eigen::Quaterniond orientation_W_B;
+  Eigen::Quaternion<double, Eigen::DontAlign> orientation_W_B;
   Eigen::Vector3d angular_velocity_W;
   Eigen::Vector3d angular_acceleration_W;
   MavActuation degrees_of_freedom;
@@ -299,7 +299,7 @@ struct EigenOdometry {
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
   int64_t timestamp_ns;  // Time since epoch, negative value = invalid timestamp.
   Eigen::Vector3d position_W;
-  Eigen::Quaterniond orientation_W_B;
+  Eigen::Quaternion<double, Eigen::DontAlign> orientation_W_B;
   Eigen::Vector3d velocity_B;  // Velocity in expressed in the Body frame!
   Eigen::Vector3d angular_velocity_B;
   Eigen::Matrix<double, 6, 6, Eigen::DontAlign> pose_covariance_;
