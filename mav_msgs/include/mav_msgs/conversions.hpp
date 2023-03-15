@@ -188,7 +188,7 @@ void EigenMavStateFromEigenTrajectoryPoint(
     const Eigen::Vector3d& acceleration, const Eigen::Vector3d& jerk,
     const Eigen::Vector3d& snap, double yaw, double yaw_rate,
     double yaw_acceleration, double magnitude_of_gravity,
-    Eigen::Quaterniond* orientation, Eigen::Vector3d* acceleration_body,
+    Quaternion* orientation, Eigen::Vector3d* acceleration_body,
     Eigen::Vector3d* angular_velocity_body,
     Eigen::Vector3d* angular_acceleration_body);
 
@@ -197,7 +197,7 @@ void EigenMavStateFromEigenTrajectoryPoint(
 inline void EigenMavStateFromEigenTrajectoryPoint(
     const Eigen::Vector3d& acceleration, const Eigen::Vector3d& jerk,
     const Eigen::Vector3d& snap, double yaw, double yaw_rate,
-    double yaw_acceleration, Eigen::Quaterniond* orientation,
+    double yaw_acceleration, Quaternion* orientation,
     Eigen::Vector3d* acceleration_body, Eigen::Vector3d* angular_velocity_body,
     Eigen::Vector3d* angular_acceleration_body) {
   EigenMavStateFromEigenTrajectoryPoint(
@@ -252,7 +252,7 @@ inline void EigenMavStateFromEigenTrajectoryPoint(
     const Eigen::Vector3d& acceleration, const Eigen::Vector3d& jerk,
     const Eigen::Vector3d& snap, double yaw, double yaw_rate,
     double yaw_acceleration, double magnitude_of_gravity,
-    Eigen::Quaterniond* orientation, Eigen::Vector3d* acceleration_body,
+    Quaternion* orientation, Eigen::Vector3d* acceleration_body,
     Eigen::Vector3d* angular_velocity_body,
     Eigen::Vector3d* angular_acceleration_body) {
   // Mapping from flat state to full state following to Mellinger [1]:
@@ -303,7 +303,7 @@ inline void EigenMavStateFromEigenTrajectoryPoint(
   const Eigen::Vector3d h_w =
       inv_thrust * (jerk - double(zb.transpose() * jerk) * zb);
 
-  *orientation = Eigen::Quaterniond(R);
+  *orientation = Quaternion(R);
   *acceleration_body = R.transpose() * zb * thrust;
   (*angular_velocity_body)[0] = -h_w.transpose() * yb;
   (*angular_velocity_body)[1] = h_w.transpose() * xb;

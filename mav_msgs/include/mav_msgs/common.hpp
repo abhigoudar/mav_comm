@@ -32,6 +32,8 @@
 
 namespace mav_msgs {
 
+using Quaternion = Eigen::Quaternion<double, Eigen::DontAlign>;
+
 const double kSmallValueCheck = 1.e-6;
 const double kNumNanosecondsPerSecond = 1.e9;
 
@@ -66,11 +68,11 @@ inline Eigen::Vector3d vector3FromPointMsg(const geometry_msgs::msg::Point& msg)
   return Eigen::Vector3d(msg.x, msg.y, msg.z);
 }
 
-inline Eigen::Quaterniond quaternionFromMsg(
+inline Quaternion quaternionFromMsg(
     const geometry_msgs::msg::Quaternion& msg) {
   // Make sure this always returns a valid Quaternion, even if the message was
   // uninitialized or only approximately set.
-  Eigen::Quaterniond quaternion(msg.w, msg.x, msg.y, msg.z);
+  Quaternion quaternion(msg.w, msg.x, msg.y, msg.z);
   if (quaternion.norm() < std::numeric_limits<double>::epsilon()) {
     quaternion.setIdentity();
   } else {
@@ -95,7 +97,7 @@ inline void pointEigenToMsg(const Eigen::Vector3d& eigen,
   msg->z = eigen.z();
 }
 
-inline void quaternionEigenToMsg(const Eigen::Quaterniond& eigen,
+inline void quaternionEigenToMsg(const Quaternion& eigen,
                                  geometry_msgs::msg::Quaternion* msg) {
   assert(msg != NULL);
   msg->x = eigen.x();
@@ -110,19 +112,19 @@ inline void quaternionEigenToMsg(const Eigen::Quaterniond& eigen,
  * RPY rotates about the fixed axes in the order x-y-z,
  * which is the same as euler angles in the order z-y'-x''.
  */
-inline double yawFromQuaternion(const Eigen::Quaterniond& q) {
+inline double yawFromQuaternion(const Quaternion& q) {
   return std::atan2(2.0 * (q.w() * q.z() + q.x() * q.y()),
                1.0 - 2.0 * (q.y() * q.y() + q.z() * q.z()));
 }
 
-inline Eigen::Quaterniond quaternionFromYaw(double yaw) {
-  return Eigen::Quaterniond(Eigen::AngleAxisd(yaw, Eigen::Vector3d::UnitZ()));
+inline Quaternion quaternionFromYaw(double yaw) {
+  return Quaternion(Eigen::AngleAxisd(yaw, Eigen::Vector3d::UnitZ()));
 }
 
 inline void setQuaternionMsgFromYaw(double yaw,
                                     geometry_msgs::msg::Quaternion* msg) {
   assert(msg != NULL);
-  Eigen::Quaterniond q_yaw = quaternionFromYaw(yaw);
+  Quaternion q_yaw = quaternionFromYaw(yaw);
   msg->x = q_yaw.x();
   msg->y = q_yaw.y();
   msg->z = q_yaw.z();

@@ -34,16 +34,16 @@ enum MavActuation { DOF4 = 4, DOF6 = 6 };
 
 struct EigenAttitudeThrust {
   EigenAttitudeThrust()
-      : attitude(Eigen::Quaterniond::Identity()),
+      : attitude(Quaternion::Identity()),
         thrust(Eigen::Vector3d::Zero()) {}
-  EigenAttitudeThrust(const Eigen::Quaterniond& _attitude,
+  EigenAttitudeThrust(const Quaternion& _attitude,
                       const Eigen::Vector3d& _thrust) {
     attitude = _attitude;
     thrust = _thrust;
   }
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-  Eigen::Quaternion<dobule, Eigen::DontAlign> attitude;
+  Quaternion attitude;
   Eigen::Vector3d thrust;
 };
 
@@ -119,14 +119,14 @@ class EigenMavState {
       : position_W(Eigen::Vector3d::Zero()),
         velocity_W(Eigen::Vector3d::Zero()),
         acceleration_B(Eigen::Vector3d::Zero()),
-        orientation_W_B(Eigen::Quaterniond::Identity()),
+        orientation_W_B(Quaternion::Identity()),
         angular_velocity_B(Eigen::Vector3d::Zero()),
         angular_acceleration_B(Eigen::Vector3d::Zero()) {}
 
   EigenMavState(const Eigen::Vector3d& position_W,
                 const Eigen::Vector3d& velocity_W,
                 const Eigen::Vector3d& acceleration_B,
-                const Eigen::Quaterniond& orientation_W_B,
+                const Quaternion& orientation_W_B,
                 const Eigen::Vector3d& angular_velocity_B,
                 const Eigen::Vector3d& angular_acceleration_B)
       : position_W(position_W),
@@ -155,7 +155,7 @@ class EigenMavState {
   Eigen::Vector3d position_W;
   Eigen::Vector3d velocity_W;
   Eigen::Vector3d acceleration_B;
-  Eigen::Quaternion<double, Eigen::DontAlign> orientation_W_B;
+  Quaternion orientation_W_B;
   Eigen::Vector3d angular_velocity_B;
   Eigen::Vector3d angular_acceleration_B;
 };
@@ -171,7 +171,7 @@ struct EigenTrajectoryPoint {
         acceleration_W(Eigen::Vector3d::Zero()),
         jerk_W(Eigen::Vector3d::Zero()),
         snap_W(Eigen::Vector3d::Zero()),
-        orientation_W_B(Eigen::Quaterniond::Identity()),
+        orientation_W_B(Quaternion::Identity()),
         angular_velocity_W(Eigen::Vector3d::Zero()),
         angular_acceleration_W(Eigen::Vector3d::Zero()),
         degrees_of_freedom(MavActuation::DOF4) {}
@@ -182,7 +182,7 @@ struct EigenTrajectoryPoint {
                        const Eigen::Vector3d& _acceleration,
                        const Eigen::Vector3d& _jerk,
                        const Eigen::Vector3d& _snap,
-                       const Eigen::Quaterniond& _orientation,
+                       const Quaternion& _orientation,
                        const Eigen::Vector3d& _angular_velocity,
                        const Eigen::Vector3d& _angular_acceleration,
                        const MavActuation& _degrees_of_freedom = MavActuation::DOF4)
@@ -203,7 +203,7 @@ struct EigenTrajectoryPoint {
                        const Eigen::Vector3d& _acceleration,
                        const Eigen::Vector3d& _jerk,
                        const Eigen::Vector3d& _snap,
-                       const Eigen::Quaterniond& _orientation,
+                       const Quaternion& _orientation,
                        const Eigen::Vector3d& _angular_velocity,
                        const MavActuation& _degrees_of_freedom = MavActuation::DOF4)
       : EigenTrajectoryPoint(_time_from_start_ns, _position, _velocity,
@@ -219,7 +219,7 @@ struct EigenTrajectoryPoint {
   Eigen::Vector3d jerk_W;
   Eigen::Vector3d snap_W;
 
-  Eigen::Quaternion<double, Eigen::DontAlign> orientation_W_B;
+  Quaternion orientation_W_B;
   Eigen::Vector3d angular_velocity_W;
   Eigen::Vector3d angular_acceleration_W;
   MavActuation degrees_of_freedom;
@@ -283,12 +283,12 @@ struct EigenOdometry {
   EigenOdometry()
       : timestamp_ns(-1),
         position_W(Eigen::Vector3d::Zero()),
-        orientation_W_B(Eigen::Quaterniond::Identity()),
+        orientation_W_B(Quaternion::Identity()),
         velocity_B(Eigen::Vector3d::Zero()),
         angular_velocity_B(Eigen::Vector3d::Zero()) {}
 
   EigenOdometry(const Eigen::Vector3d& _position,
-                const Eigen::Quaterniond& _orientation,
+                const Quaternion& _orientation,
                 const Eigen::Vector3d& _velocity_body,
                 const Eigen::Vector3d& _angular_velocity)
       : position_W(_position),
@@ -299,7 +299,7 @@ struct EigenOdometry {
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
   int64_t timestamp_ns;  // Time since epoch, negative value = invalid timestamp.
   Eigen::Vector3d position_W;
-  Eigen::Quaternion<double, Eigen::DontAlign> orientation_W_B;
+  Quaternion orientation_W_B;
   Eigen::Vector3d velocity_B;  // Velocity in expressed in the Body frame!
   Eigen::Vector3d angular_velocity_B;
   Eigen::Matrix<double, 6, 6, Eigen::DontAlign> pose_covariance_;
