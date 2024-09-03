@@ -81,7 +81,7 @@ inline void polynomialSegmentMsgFromEigen(const EigenPolynomialSegment& segment,
   msgArrayFromVector(segment.z, &(msg->z));
   msgArrayFromVector(segment.yaw, &(msg->yaw));
 
-  msg->segment_time = rclcpp::Duration(segment.segment_time_ns);
+  msg->segment_time = rclcpp::Duration::from_nanoseconds(segment.segment_time_ns);
   msg->num_coeffs = segment.num_coeffs;
 }
 

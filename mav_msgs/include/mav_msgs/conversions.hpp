@@ -471,7 +471,7 @@ inline void msgMultiDofJointTrajectoryPointFromEigen(
     trajectory_msgs::msg::MultiDOFJointTrajectoryPoint* msg) {
   assert(msg != NULL);
 
-  msg->time_from_start = rclcpp::Duration(trajectory_point.time_from_start_ns);
+  msg->time_from_start = rclcpp::Duration::from_nanoseconds(trajectory_point.time_from_start_ns);
   msg->transforms.resize(1);
   msg->velocities.resize(1);
   msg->accelerations.resize(1);

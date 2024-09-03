@@ -69,11 +69,11 @@ rosidl_generate_interfaces(${PROJECT_NAME}
 )
 
 install(
-  DIRECTORY include/
-  DESTINATION include/
+  DIRECTORY include/${PROJECT_NAME}
+  DESTINATION include/${PROJECT_NAME}
 )
 
 ament_export_dependencies(eigen3_cmake_module)
-ament_export_include_directories(include)
+ament_export_include_directories(include/${PROJECT_NAME})
 ament_export_dependencies(rosidl_default_runtime)
 ament_package()
